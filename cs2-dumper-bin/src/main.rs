@@ -1,4 +1,6 @@
-use std::path::PathBuf;
+mod output;
+
+use std::{os::unix::process, path::PathBuf};
 use std::str::FromStr;
 use std::time::Instant;
 
@@ -6,18 +8,11 @@ use clap::*;
 
 use log::{info, Level};
 
-use memflow::prelude::v1::*;
 
+use output::Output;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
-use error::Result;
-use output::Output;
 
-mod analysis;
-mod error;
-mod mem;
-mod output;
-mod source2;
 
 #[derive(Debug, Parser)]
 #[command(author, version)]
@@ -51,7 +46,7 @@ struct Args {
     verbose: u8,
 }
 
-fn main() -> Result<()> {
+fn main() -> cs2_dumper::error::Result<()> {
     let args = Args::parse();
     let now = Instant::now();
 
@@ -71,33 +66,18 @@ fn main() -> Result<()> {
     )
     .unwrap();
 
-    let conn_args = args
-        .connector_args
-        .map(|s| ConnectorArgs::from_str(&s).expect("unable to parse connector arguments"))
-        .unwrap_or_default();
 
-    let os = if let Some(conn) = args.connector {
-        let inventory = Inventory::scan();
-
-        inventory
-            .builder()
-            .connector(&conn)
-            .args(conn_args)
-            .os("win32")
-            .build()?
-    } else {
-        // Fallback to the native OS layer if no connector name was specified.
-        memflow_native::create_os(&OsArgs::default(), LibArc::default())?
-    };
-
-    let mut process = os.into_process_by_name(&args.process_name)?;
-
-    let result = analysis::analyze_all(&mut process)?;
+    let (result,mut process) = cs2_dumper::ScannerBuilder::default()
+        .connector(args.connector)
+        .connector_args(args.connector_args)
+        .process_name(args.process_name)
+        .verbose(args.verbose)
+        .build().unwrap()
+        .run()?;
 
     let output = Output::new(&args.file_types, args.indent_size, &args.output, &result)?;
 
     output.dump_all(&mut process)?;
-
     info!("finished in {:?}", now.elapsed());
 
     Ok(())

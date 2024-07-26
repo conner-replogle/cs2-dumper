@@ -1,0 +1,15 @@
+[package]
+name = "cs2-dumper-bin"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+log = "0.4"
+simplelog = "0.12"
+cs2-dumper = { path = "../cs2-dumper" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+memflow = "0.2"
+chrono = { version = "0.4", features = ["serde"] }
+heck = "0.5"

@@ -4,14 +4,15 @@ use std::path::Path;
 
 use chrono::{DateTime, Utc};
 
+use cs2_dumper::analysis::*;
 use memflow::prelude::v1::*;
 
 use serde_json::json;
 
 use formatter::Formatter;
 
-use crate::analysis::*;
-use crate::error::{Error, Result};
+
+use cs2_dumper::error::{Error, Result};
 
 mod buttons;
 mod formatter;

@@ -129,7 +129,7 @@ pattern_map! {
 
 pub fn offsets(process: &mut IntoProcessInstanceArcBox<'_>) -> Result<OffsetMap> {
     let mut map = BTreeMap::new();
-
+    
     let modules: [(&str, fn(PeView) -> BTreeMap<String, u32>); 5] = [
         ("client.dll", client::offsets),
         ("engine2.dll", engine2::offsets),

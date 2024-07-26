@@ -7,7 +7,7 @@ use serde_json::json;
 
 use super::{slugify, CodeWriter, Formatter, SchemaMap};
 
-use crate::analysis::ClassMetadata;
+use cs2_dumper::analysis::ClassMetadata;
 
 impl CodeWriter for SchemaMap {
     fn write_cs(&self, fmt: &mut Formatter<'_>) -> fmt::Result {
