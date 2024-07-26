@@ -1,2 +1,2 @@
 [workspace]
-members = ["cs2-dumper","cs2-dumper-bin"]
+members = ["cs2-scanner","bin"]
